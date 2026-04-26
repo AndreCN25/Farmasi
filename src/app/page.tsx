@@ -91,7 +91,7 @@ export default function Home() {
   const handleLogout = async () => await supabase.auth.signOut();
   
   const orderWhatsApp = (productName: string) => {
-    const number = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '9993446149';
+    const number = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '529993446149';
     const msg = encodeURIComponent(`¡Hola! Me encantó el producto ${productName} de Farmasi y quisiera pedirlo.`);
     window.open(`https://wa.me/${number}?text=${msg}`, '_blank');
   };
