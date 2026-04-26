@@ -491,9 +491,9 @@ h1, h2, h3, .serif-text {
 
 @media (max-width: 768px) {
   .splash-text { font-size: 3.5rem; }
-  .header { padding: 1rem 1.5rem; display: flex; flex-direction: row; justify-content: space-between; align-items: center; }
+  .header { padding: 1rem 0.5rem; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 1rem; }
   .header-logo { position: static; transform: none; font-size: 2rem; margin: 0; }
-  .header-actions { margin-left: 0; }
+  .header-actions { width: 100%; margin: 0; display: flex; justify-content: center; gap: 1rem; }
   
   .section-title { font-size: 2rem; margin-bottom: 2rem; }
   .products-section { padding: 3rem 1.5rem; margin-top: 2rem !important; }
