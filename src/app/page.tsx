@@ -172,12 +172,10 @@ export default function Home() {
   const prevImage = () => setImgIndex(old => old === 0 ? currentCarouselContext.length - 1 : old - 1);
   const nextImage = () => setImgIndex(old => old === currentCarouselContext.length - 1 ? 0 : old + 1);
 
-  // Generar lista final de evidencias (Base de datos + Locales)
-  const dynamicEvidences = dbEvidences.map(e => ({ id: `db-${e.id}`, src: e.image }));
-  const localEvidences = [1,2,3,4,5,6,8,9].map(idx => ({ id: `local-${idx}`, src: `/Evidencias/${idx}.jpeg` }));
-  const allEvidences = [...dynamicEvidences, ...localEvidences];
+  // Generar lista final de evidencias (Solo Base de datos)
+  const allEvidences = dbEvidences.map(e => ({ id: `db-${e.id}`, src: e.image }));
   // Duplicar para efecto marquee (scroll infinito)
-  const marqueeEvidences = [...allEvidences, ...allEvidences, ...allEvidences];
+  const marqueeEvidences = allEvidences.length > 0 ? [...allEvidences, ...allEvidences, ...allEvidences] : [];
 
   return (
     <>
@@ -199,18 +197,20 @@ export default function Home() {
         </div>
       </header>
 
-      <section className="evidences-section">
-        <h2 className="section-title">Evidencias</h2>
-        <div className="marquee-container">
-          <div className="marquee-track">
-             {marqueeEvidences.map((ev, i) => (
-                <div key={`${ev.id}-${i}`} className="evidence-card" onClick={() => setSelectedEvidence(ev.src)}>
-                  <img src={ev.src} alt={`Evidencia ${i}`} />
-                </div>
-             ))}
+      {allEvidences.length > 0 && (
+        <section className="evidences-section">
+          <h2 className="section-title">Evidencias</h2>
+          <div className="marquee-container">
+            <div className="marquee-track">
+               {marqueeEvidences.map((ev, i) => (
+                  <div key={`${ev.id}-${i}`} className="evidence-card" onClick={() => setSelectedEvidence(ev.src)}>
+                    <img src={ev.src} alt={`Evidencia ${i}`} />
+                  </div>
+               ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* SECCIÓN MUJERES */}
       <section className="products-section">
