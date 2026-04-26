@@ -22,6 +22,7 @@ export default function Home() {
   const [products, setProducts] = useState(fallbackProducts);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [selectedEvidence, setSelectedEvidence] = useState<string | null>(null);
+  const [dbEvidences, setDbEvidences] = useState<{id: string, image: string}[]>([]);
 
   // Modal specific states
   const [editForm, setEditForm] = useState({ name: '', description: '', price: 0, extra_images: [] as string[] });
@@ -34,6 +35,7 @@ export default function Home() {
   useEffect(() => {
     const timer = setTimeout(() => setShowSplash(false), 2500);
     fetchProducts();
+    fetchEvidences();
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session as any);
       checkAdmin(session?.user?.email);
@@ -76,6 +78,13 @@ export default function Home() {
       console.log('Using local fallback products due to error:', err);
     }
   }
+
+  const fetchEvidences = async () => {
+    try {
+      const { data } = await supabase.from('evidence').select('*').order('created_at', { ascending: false });
+      if (data) setDbEvidences(data);
+    } catch (e) {}
+  };
 
   const checkAdmin = async (email?: string) => {
     if (!email) return setIsAdmin(false);
@@ -163,6 +172,13 @@ export default function Home() {
   const prevImage = () => setImgIndex(old => old === 0 ? currentCarouselContext.length - 1 : old - 1);
   const nextImage = () => setImgIndex(old => old === currentCarouselContext.length - 1 ? 0 : old + 1);
 
+  // Generar lista final de evidencias (Base de datos + Locales)
+  const dynamicEvidences = dbEvidences.map(e => ({ id: `db-${e.id}`, src: e.image }));
+  const localEvidences = [1,2,3,4,5,6,8,9].map(idx => ({ id: `local-${idx}`, src: `/Evidencias/${idx}.jpeg` }));
+  const allEvidences = [...dynamicEvidences, ...localEvidences];
+  // Duplicar para efecto marquee (scroll infinito)
+  const marqueeEvidences = [...allEvidences, ...allEvidences, ...allEvidences];
+
   return (
     <>
       <div className={`splash-container ${!showSplash ? 'hide' : ''}`}>
@@ -187,9 +203,9 @@ export default function Home() {
         <h2 className="section-title">Evidencias</h2>
         <div className="marquee-container">
           <div className="marquee-track">
-             {[1,2,3,4,5,6,8,9,1,2,3,4,5,6,8,9].map((idx, i) => (
-                <div key={`${idx}-${i}`} className="evidence-card" onClick={() => setSelectedEvidence(`/Evidencias/${idx}.jpeg`)}>
-                  <img src={`/Evidencias/${idx}.jpeg`} alt={`Evidencia ${idx}`} />
+             {marqueeEvidences.map((ev, i) => (
+                <div key={`${ev.id}-${i}`} className="evidence-card" onClick={() => setSelectedEvidence(ev.src)}>
+                  <img src={ev.src} alt={`Evidencia ${i}`} />
                 </div>
              ))}
           </div>

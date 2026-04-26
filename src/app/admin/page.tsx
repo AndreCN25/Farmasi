@@ -18,6 +18,10 @@ export default function AdminPanel() {
   const [newAdminEmail, setNewAdminEmail] = useState('');
   const [isAddingAdmin, setIsAddingAdmin] = useState(false);
 
+  // States for evidence
+  const [evidences, setEvidences] = useState<{id: string, image: string}[]>([]);
+  const [isUploadingEvidence, setIsUploadingEvidence] = useState(false);
+
   const router = useRouter();
 
   // Controlar tema de colores según el desplegable
@@ -44,6 +48,7 @@ export default function AdminPanel() {
       if (email === 'andrecn643@gmail.com') {
         setIsAdmin(true);
         fetchAdmins();
+        fetchEvidences();
         return;
       }
       // Check securely against database
@@ -52,6 +57,7 @@ export default function AdminPanel() {
         if (data && data.length > 0) {
           setIsAdmin(true);
           fetchAdmins();
+          fetchEvidences();
         } else {
           setIsAdmin(false);
           router.push('/');
@@ -95,6 +101,50 @@ export default function AdminPanel() {
        const { error } = await supabase.from('admins').delete().eq('id', id);
        if (error) alert('Error al revocar acceso: ' + error.message);
        else fetchAdmins();
+     } catch (e) {}
+  };
+
+  const fetchEvidences = async () => {
+    try {
+      const { data } = await supabase.from('evidence').select('*').order('created_at', { ascending: false });
+      if (data) setEvidences(data);
+    } catch(e) {}
+  };
+
+  const handleEvidenceUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert("La imagen es demasiado pesada (máximo 5MB)");
+        return;
+      }
+      setIsUploadingEvidence(true);
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        const base64Image = reader.result as string;
+        try {
+           const { error } = await supabase.from('evidence').insert([{ image: base64Image }]);
+           if (error) {
+             alert('Error al subir la evidencia: ' + error.message);
+           } else {
+             alert('¡Evidencia subida exitosamente y enviada al carrusel!');
+             fetchEvidences();
+           }
+        } catch (err) {}
+        setIsUploadingEvidence(false);
+        // Reset file input
+        if (e.target) e.target.value = '';
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveEvidence = async (id: string) => {
+     if (!confirm(`¿Estás seguro de que quieres eliminar esta evidencia del carrusel?`)) return;
+     try {
+       const { error } = await supabase.from('evidence').delete().eq('id', id);
+       if (error) alert('Error al eliminar evidencia: ' + error.message);
+       else fetchEvidences();
      } catch (e) {}
   };
 
@@ -161,13 +211,29 @@ export default function AdminPanel() {
           <h2><ImageIcon size={28} color="var(--primary-accent)"/> Gestión de Evidencias</h2>
           <p className="admin-subtitle">Mantén el catálogo de confianza fresco. Sube nuevas fotos de tus clientes felices para inyectarlas directamente al carrusel animado de la página principal.</p>
           
-          <div className="admin-upload-box">
-             <input type="file" id="evidence-upload" hidden />
-             <label htmlFor="evidence-upload" className="btn btn-primary" style={{display:'inline-flex', cursor:'pointer', margin: '0 auto'}}>
-               <PlusCircle size={18}/> Seleccionar Fotografías Completas
+          <div className="admin-upload-box" style={{marginBottom: '2rem'}}>
+             <input type="file" id="evidence-upload" accept="image/*" onChange={handleEvidenceUpload} hidden disabled={isUploadingEvidence} />
+             <label htmlFor="evidence-upload" className="btn btn-primary" style={{display:'inline-flex', cursor:'pointer', margin: '0 auto', opacity: isUploadingEvidence ? 0.7 : 1}}>
+               <PlusCircle size={18}/> {isUploadingEvidence ? 'Subiendo evidencia...' : 'Subir Nueva Evidencia'}
              </label>
-             <p style={{marginTop: '1rem', color:'var(--text-light)', fontSize: '0.85rem'}}>*Soporta .jpg, .png y .jpeg (Máx 5MB)</p>
+             <p style={{marginTop: '1rem', color:'var(--text-light)', fontSize: '0.85rem'}}>*Soporta .jpg, .png y .jpeg (Máx 5MB). Se añadirá automáticamente a la web.</p>
           </div>
+
+          {evidences.length > 0 && (
+            <div style={{marginTop: '2rem'}}>
+              <h3 style={{fontSize: '1rem', marginBottom: '1rem', color: 'var(--text-dark)'}}>Evidencias Subidas ({evidences.length})</h3>
+              <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '1rem'}}>
+                 {evidences.map(ev => (
+                   <div key={ev.id} style={{position: 'relative', borderRadius: '8px', overflow: 'hidden', aspectRatio: '1/1', boxShadow: '0 4px 10px rgba(0,0,0,0.1)'}}>
+                      <img src={ev.image} alt="Evidencia" style={{width: '100%', height: '100%', objectFit: 'cover'}} />
+                      <button onClick={() => handleRemoveEvidence(ev.id)} style={{position: 'absolute', top: '5px', right: '5px', background: 'rgba(255,0,0,0.8)', color: 'white', border: 'none', borderRadius: '50%', padding: '0.4rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center'}} title="Borrar Evidencia">
+                        <Trash2 size={14}/>
+                      </button>
+                   </div>
+                 ))}
+              </div>
+            </div>
+          )}
         </section>
 
         <section className="admin-section">
