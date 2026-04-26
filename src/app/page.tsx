@@ -21,7 +21,7 @@ export default function Home() {
   
   const [products, setProducts] = useState(fallbackProducts);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
-  const [selectedEvidence, setSelectedEvidence] = useState<string | null>(null);
+  const [selectedEvidence, setSelectedEvidence] = useState<{id: string, src: string} | null>(null);
   const [dbEvidences, setDbEvidences] = useState<{id: string, image: string}[]>([]);
 
   // Modal specific states
@@ -141,6 +141,27 @@ export default function Home() {
     setIsDeleting(false);
   };
 
+  const handleDeleteEvidence = async () => {
+    if (!selectedEvidence) return;
+    if (selectedEvidence.id.startsWith('local-')) {
+       alert('Esta es una imagen precargada. Para eliminar las fotos de fábrica permanentemente pídemelo en el chat, o sube las tuyas desde el panel de administrador.');
+       return;
+    }
+    
+    if (!confirm('¿Seguro que quieres eliminar esta evidencia de la web?')) return;
+    
+    try {
+      const realId = selectedEvidence.id.replace('db-', '');
+      const { error } = await supabase.from('evidence').delete().eq('id', realId);
+      if (error) {
+        alert('Error: ' + error.message);
+      } else {
+        setDbEvidences(prev => prev.filter(e => e.id.toString() !== realId));
+        setSelectedEvidence(null);
+      }
+    } catch(e) {}
+  };
+
   const handleAddExtraPhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -204,7 +225,7 @@ export default function Home() {
         <div className="marquee-container">
           <div className="marquee-track">
              {marqueeEvidences.map((ev, i) => (
-                <div key={`${ev.id}-${i}`} className="evidence-card" onClick={() => setSelectedEvidence(ev.src)}>
+                <div key={`${ev.id}-${i}`} className="evidence-card" onClick={() => setSelectedEvidence(ev)}>
                   <img src={ev.src} alt={`Evidencia ${i}`} />
                 </div>
              ))}
@@ -344,9 +365,17 @@ export default function Home() {
       {/* EVIDENCE LIGHTBOX */}
       {selectedEvidence && (
         <div className="modal-overlay" onClick={() => setSelectedEvidence(null)}>
-          <div className="lightbox-content" onClick={e => e.stopPropagation()}>
+          <div className="lightbox-content" onClick={e => e.stopPropagation()} style={{position: 'relative'}}>
             <button className="modal-close" onClick={() => setSelectedEvidence(null)} style={{top: '-40px', right: '-15px', border: 'none', color: '#fff'}}><X size={28} /></button>
-            <img src={selectedEvidence} alt="Evidencia Ampliada" />
+            <img src={selectedEvidence.src} alt="Evidencia Ampliada" />
+            {isAdmin && (
+              <button 
+                onClick={handleDeleteEvidence} 
+                style={{position: 'absolute', bottom: '-50px', left: '50%', transform: 'translateX(-50%)', background: 'rgba(255,0,0,0.8)', color: 'white', border: 'none', borderRadius: '8px', padding: '0.8rem 1.5rem', cursor: 'pointer', display: 'flex', gap: '0.5rem', alignItems: 'center', fontSize: '1rem', backdropFilter: 'blur(5px)'}}
+              >
+                <Trash2 size={20} /> Borrar esta evidencia
+              </button>
+            )}
           </div>
         </div>
       )}
