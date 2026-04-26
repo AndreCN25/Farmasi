@@ -4,22 +4,13 @@ import { supabase } from '../lib/supabase';
 import { ShoppingBag, KeyRound, LogOut, MessageCircle, X, ChevronLeft, ChevronRight, ImagePlus, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 
-const fallbackProducts = [2,3,4,5,6,7].map(id => ({
-  id,
-  name: `Producto Estrella ${id}`,
-  description: 'Este es un producto maravilloso de la línea de Farmasi con propiedades increíbles para tu cuidado personal.',
-  price: 250.00,
-  image: `/Productos/${id}.jpeg`,
-  extra_images: [] as string[],
-  category: id % 2 === 0 ? 'women' : 'men'
-}));
 
 export default function Home() {
   const [showSplash, setShowSplash] = useState(true);
   const [session, setSession] = useState<{user: {email?: string}} | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   
-  const [products, setProducts] = useState(fallbackProducts);
+  const [products, setProducts] = useState<any[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [selectedEvidence, setSelectedEvidence] = useState<string | null>(null);
   const [dbEvidences, setDbEvidences] = useState<{id: string, image: string}[]>([]);
@@ -71,7 +62,7 @@ export default function Home() {
   const fetchProducts = async () => {
     try {
       const { data, error } = await supabase.from('products').select('*').order('id', { ascending: true });
-      if (data && data.length > 0) {
+      if (data) {
         setProducts(data);
       }
     } catch(err) {
