@@ -521,9 +521,10 @@ h1, h2, h3, .serif-text {
 
 @media (max-width: 480px) {
   .splash-text { font-size: 2.5rem; }
-  .header { padding: 1rem; display: flex; flex-direction: row; justify-content: space-between; align-items: center; gap: 0; }
-  .header-logo { position: static; transform: none; font-size: 1.6rem; margin: 0; }
-  .header-actions { width: auto; margin-left: 0; justify-content: flex-end; }
+  .header { padding: 1rem 0.5rem; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 0.8rem; }
+  .header-logo { position: static; transform: none; font-size: 2rem; margin: 0; }
+  .header-actions { width: 100%; margin: 0; display: flex; justify-content: center; gap: 0.5rem; }
+  .btn { padding: 0.6rem 1rem; font-size: 0.85rem; }
   
   .evidence-card { width: 220px; height: 300px; }
   
