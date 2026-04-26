@@ -10,7 +10,7 @@ const fallbackProducts = [2,3,4,5,6,7].map(id => ({
   description: 'Este es un producto maravilloso de la línea de Farmasi con propiedades increíbles para tu cuidado personal.',
   price: 250.00,
   image: `/Productos/${id}.jpeg`,
-  extra_images: [],
+  extra_images: [] as string[],
   category: id % 2 === 0 ? 'women' : 'men'
 }));
 
@@ -91,7 +91,7 @@ export default function Home() {
     if (email === 'andrecn643@gmail.com') return setIsAdmin(true);
     try {
       const { data } = await supabase.from('admins').select('email').eq('email', email);
-      setIsAdmin(data && data.length > 0);
+      setIsAdmin(!!(data && data.length > 0));
     } catch (e) {
       setIsAdmin(false);
     }
@@ -100,7 +100,7 @@ export default function Home() {
   const handleLogout = async () => await supabase.auth.signOut();
   
   const orderWhatsApp = (productName: string) => {
-    const number = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '9987318370';
+    const number = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '9993446149';
     const msg = encodeURIComponent(`¡Hola! Me encantó el producto ${productName} de Farmasi y quisiera pedirlo.`);
     window.open(`https://wa.me/${number}?text=${msg}`, '_blank');
   };
