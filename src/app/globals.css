@@ -1,0 +1,562 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Montserrat:wght@300;400;500;600&display=swap');
+
+:root {
+  /* VIBRANT BEAUTY / MAKEUP PALETTE (Default / Women) */
+  --primary-accent: #FF1493; /* Fuchsia Vibrante / Hot Pink */
+  --accent-dark: #C71585;   /* Rosa Oscuro / Magenta */
+  --surface-color: rgba(255, 255, 255, 0.85);
+  --bg-creamy: #FFF0F5;     /* Rosa Pastel muy suave */
+  --text-dark: #4A154B;     /* Ciruela / Aubergine oscuro para texto */
+  --text-light: #9B6A9C;    /* Malva suave */
+  --border-light: rgba(255, 20, 147, 0.15);
+  --body-bg-gradient: linear-gradient(-45deg, #FFF0F5, #FFE4E1, #FFD1DC, #FFF0F5);
+  --surface-hover: rgba(255, 255, 255, 0.95);
+}
+
+/* WINE / DARK THEME FOR MEN (Activated dynamically on Scroll) */
+body.theme-men {
+  --primary-accent: #9e0c1f; /* Elegant Crimson / Wine */
+  --accent-dark: #4a0404;   /* Deepest Burgundy */
+  --surface-color: rgba(30, 30, 30, 0.85); /* Dark Glassmorphism */
+  --bg-creamy: #0a0a0a;     /* Matte Black */
+  --text-dark: #FFFFFF;     /* Pure White text */
+  --text-light: #E0E0E0;    /* Much whiter Light Gray for description */
+  --border-light: rgba(158, 12, 31, 0.3);  /* Red borders */
+  --body-bg-gradient: linear-gradient(-45deg, #0a0a0a, #200408, #140205, #0a0a0a);
+  --surface-hover: rgba(45, 40, 42, 0.95); /* A slightly lighter black/wine glass */
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  background: linear-gradient(-45deg, #FFF0F5, #FFE4E1, #FFD1DC, #FFF0F5);
+  background-size: 400% 400%;
+  animation: subtleLuxuryBG 15s ease-in-out infinite;
+  color: var(--text-dark);
+  overflow-x: hidden;
+  min-height: 100vh;
+  /* El transition suaviza todos los colores base (textos, etc) */
+  transition: color 0.8s ease-in-out, background-color 0.8s ease-in-out, border-color 0.8s ease-in-out; 
+}
+
+/* El truco experto para difuminar gradientes ya que CSS no anima gradientes nativamente */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: linear-gradient(-45deg, #0a0a0a, #200408, #140205, #0a0a0a);
+  background-size: 400% 400%;
+  animation: subtleLuxuryBG 15s ease-in-out infinite;
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out;
+  z-index: -1;
+  pointer-events: none;
+}
+
+body.theme-men::before {
+  opacity: 1; /* El difuminado maestro a negro/vino */
+}
+
+@keyframes subtleLuxuryBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* TYPOGRAPHY */
+h1, h2, h3, .serif-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+/* SPLASH SCREEN ANIMATION */
+.splash-container {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(-45deg, #FF1493, #C71585, #4a0404, #0a0a0a);
+  background-size: 400% 400%;
+  animation: splashFluid 4s ease-in-out infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes splashFluid {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.splash-container.hide {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.splash-text {
+  font-size: 6rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  
+  /* Efecto Gradiente Animado Shine */
+  background: linear-gradient(to right, var(--primary-accent), #ff6699, var(--text-dark), var(--primary-accent));
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 10px 20px rgba(0,0,0,0.4)); /* Compatible con text-clip */
+  
+  animation: elegantFade 3s cubic-bezier(0.4, 0, 0.2, 1) forwards, logoShine 4s linear infinite;
+}
+
+@keyframes elegantFade {
+  0% {
+    transform: scale(0.95);
+    opacity: 0;
+    filter: blur(10px);
+  }
+  50% {
+    opacity: 1;
+    filter: blur(0px);
+  }
+  100% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+}
+
+/* HEADER */
+.header {
+  background: var(--surface-color); /* Matches the theme seamlessly */
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border-bottom: 1px solid var(--border-light);
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.2rem 4rem;
+  box-shadow: 0 10px 30px var(--border-light);
+  transition: all 0.8s ease-in-out;
+}
+
+.header-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.8rem;
+  font-style: italic;
+  font-weight: 600;
+  background: linear-gradient(to right, var(--primary-accent), #ff6699, var(--text-dark), var(--primary-accent));
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: logoShine 4s linear infinite;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+@keyframes logoShine {
+  to { background-position: 200% center; }
+}
+
+.header-actions {
+  display: flex;
+  gap: 1.5rem;
+  margin-left: auto; /* Buttons on the right */
+}
+
+/* BUTTONS */
+.btn {
+  font-family: 'Montserrat', sans-serif;
+  padding: 0.6rem 1.8rem;
+  border-radius: 12px; /* Esquinas curveadas */
+  font-weight: 500;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  color: var(--text-dark);
+}
+
+.btn:hover {
+  background: rgba(0,0,0,0.02);
+}
+
+.btn-primary {
+  background: var(--primary-accent);
+  color: #fff;
+  border: 1px solid var(--primary-accent);
+  transition: all 0.8s ease-in-out;
+}
+
+.btn-primary:hover {
+  background: var(--accent-dark);
+  color: #fff;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+/* MARQUEE SECTION (EVIDENCES) */
+.evidences-section {
+  margin-top: 7rem;
+  padding: 4rem 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255, 20, 147, 0.05) 100%);
+  border-top: 1px solid var(--border-light);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.section-title {
+  text-align: center;
+  font-size: 3rem;
+  margin-bottom: 3rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-weight: 400;
+}
+
+.marquee-container {
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+  width: 100%;
+  display: flex;
+}
+
+.marquee-track {
+  display: inline-flex;
+  animation: scroll 25s linear infinite;
+  gap: 2rem;
+  padding: 1rem 0;
+}
+
+.marquee-container:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+.evidence-card {
+  width: 320px;
+  height: 420px;
+  border-radius: 18px; /* Curvas elegantes */
+  overflow: hidden;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.06);
+  flex-shrink: 0;
+  border: 4px solid var(--surface-color);
+}
+
+.evidence-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.evidence-card:hover img {
+  transform: scale(1.08); /* Elegant slow zoom */
+}
+
+@keyframes scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); } 
+}
+
+/* PRODUCTS GRID */
+.products-section {
+  padding: 6rem 4rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 3rem;
+  margin-top: 3rem;
+}
+
+.product-card {
+  background: var(--surface-color);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 20px; /* Curvas pronunciadas tipo app */
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.04);
+  transition: all 0.8s ease-in-out, transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+}
+
+.product-card:hover {
+  background: var(--surface-hover);
+  transform: translateY(-8px);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+}
+
+.product-image-container {
+  height: 380px;
+  overflow: hidden;
+  background: #fcfcfc;
+}
+
+.product-image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.product-card:hover .product-image-container img {
+  transform: scale(1.05); /* Subtle scale */
+}
+
+.product-info {
+  padding: 2rem;
+  text-align: center;
+}
+
+.product-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: var(--text-dark);
+}
+
+.product-price {
+  font-size: 1.1rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  color: var(--accent-dark);
+  margin-bottom: 1rem;
+}
+
+.product-desc {
+  color: var(--text-light);
+  margin-bottom: 2rem;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  font-weight: 300;
+}
+
+.product-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Inputs / Forms */
+.input-field {
+  width: 100%;
+  padding: 1rem;
+  margin: 0.5rem 0 1.5rem 0;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 2px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.8s ease-in-out;
+}
+
+.input-field:focus {
+  border-color: var(--accent-dark);
+  background: #fff;
+}
+
+/* MODAL STYLES (ZOOM / EDIT) */
+.modal-overlay { 
+  position: fixed; 
+  inset: 0; 
+  background: rgba(20, 18, 18, 0.6); 
+  backdrop-filter: blur(8px); 
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  z-index: 2000; 
+  padding: 2rem; 
+}
+
+.modal-content { 
+  background: var(--bg-creamy); 
+  width: 100%; 
+  max-width: 1000px; 
+  border-radius: 24px; /* Modal con curvas fluidas */
+  overflow: hidden; 
+  display: flex; 
+  gap: 0; 
+  box-shadow: 0 40px 100px rgba(0,0,0,0.3); 
+  position: relative; 
+  max-height: 90vh; 
+  overflow-y: auto; 
+}
+
+.modal-close { 
+  position: absolute; 
+  top: 1.5rem; 
+  right: 1.5rem; 
+  background: transparent; 
+  border: 1px solid rgba(0,0,0,0.1); 
+  border-radius: 50%; 
+  width: 45px; 
+  height: 45px; 
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  color: var(--text-dark); 
+  cursor: pointer; 
+  transition: all 0.4s ease; 
+  z-index: 10; 
+}
+
+.modal-close:hover { 
+  background: var(--text-dark); 
+  color: white; 
+  transform: rotate(90deg); 
+}
+
+.modal-image { 
+  flex: 1.2; 
+  background: #f0f0f0; 
+  position: relative;
+}
+
+.modal-image img { 
+  width: 100%; 
+  height: 100%; 
+  position: absolute;
+  object-fit: cover; 
+}
+
+.modal-details { 
+  flex: 1; 
+  padding: 4rem 3rem; 
+  display: flex; 
+  flex-direction: column; 
+  background: #fff;
+}
+
+.modal-price-large { 
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.8rem; 
+  font-weight: 300; 
+  color: var(--accent-dark); 
+  margin-bottom: 2rem; 
+  letter-spacing: 0.05em;
+}
+
+/* ADMIN PANEL STYLES */
+.admin-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.8rem;
+  font-style: italic;
+  font-weight: 600;
+  
+  /* Efecto Gradiente Animado Shine */
+  background: linear-gradient(to right, var(--primary-accent), #ff6699, var(--text-dark), var(--primary-accent));
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: logoShine 4s linear infinite;
+  text-align: center;
+}
+
+/* =========================================
+   RESPONSIVENESS (MOBILE & TABLET ADAPTATION) 
+   ========================================= */
+
+@media (max-width: 1024px) {
+  .splash-text { font-size: 5rem; }
+  .header-logo { font-size: 2.2rem; }
+  .products-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+  .section-title { font-size: 2.5rem; }
+  .header { padding: 1.2rem 2rem; }
+}
+
+@media (max-width: 768px) {
+  .splash-text { font-size: 3.5rem; }
+  .header { padding: 1rem 1.5rem; }
+  .header-logo { font-size: 1.8rem; }
+  
+  .section-title { font-size: 2rem; margin-bottom: 2rem; }
+  .products-section { padding: 3rem 1.5rem; margin-top: 2rem !important; }
+  
+  .evidences-section { margin-top: 5.5rem; padding: 2rem 0; }
+  .evidence-card { width: 260px; height: 340px; }
+  
+  .products-grid { gap: 2rem; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+  .product-image-container { height: 300px; }
+  
+  .btn { padding: 0.7rem 1.2rem; font-size: 0.9rem; }
+  
+  .admin-header { padding: 1rem 1.5rem; flex-direction: column; gap: 1rem; text-align: center; }
+  .admin-title { font-size: 1.6rem; }
+  .admin-section { padding: 1.5rem; }
+  
+  /* Modal Response */
+  .modal-overlay { padding: 1rem; }
+  .modal-content { flex-direction: column; max-height: 90vh; border-radius: 16px; }
+  .modal-image { min-height: 250px; flex: unset; }
+  .modal-details { padding: 2rem 1.5rem; flex: 1; overflow-y: auto;}
+  .modal-price-large { margin-bottom: 1rem; font-size: 1.4rem; }
+  .modal-details h2 { font-size: 1.7rem !important; }
+}
+
+@media (max-width: 480px) {
+  .splash-text { font-size: 2.5rem; }
+  .header { flex-direction: column; gap: 1rem; padding: 1rem; }
+  .header-actions { width: 100%; display: flex; justify-content: center; }
+  
+  .evidence-card { width: 220px; height: 300px; }
+  
+  .products-grid { grid-template-columns: 1fr; }
+  .product-image-container { height: 280px; }
+  .product-info { padding: 1.5rem; }
+  
+  .admin-content { padding: 0 0.5rem; }
+  .admin-title { font-size: 1.4rem; }
+  
+  .modal-image { min-height: 200px; }
+}
+
+/* Lightbox specífic tweak */
+.lightbox-content {
+  background: transparent !important;
+  box-shadow: none !important;
+  max-width: 900px !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.lightbox-content img {
+  border-radius: 4px;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+}
+
+/* ADMIN PANEL STYLES */
+.admin-dashboard { background-color: transparent; min-height: 100vh; padding-bottom: 4rem;}
+.admin-header { background: rgba(255, 240, 245, 0.4); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border-bottom: 1px solid var(--border-light); padding: 1.5rem 4rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 10px 30px rgba(255, 20, 147, 0.05); }
+.admin-title { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; font-weight: 600; font-style: italic; color: var(--text-dark); margin: 0; display:flex; align-items: center; gap: 0.5rem;}
+.admin-content { max-width: 900px; margin: 3rem auto; padding: 0 1rem; display: grid; gap: 3rem; }
+.admin-section { background: rgba(255,255,255,0.7); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.9); border-radius: 20px; padding: 3rem; box-shadow: 0 20px 40px rgba(0,0,0,0.04); }
+.admin-section h2 { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1rem; font-size: 1.8rem; color: var(--text-dark);}
+.admin-subtitle { color: var(--text-light); margin-bottom: 2rem; font-size: 1rem; line-height: 1.6; }
+.admin-upload-box { border: 2px dashed rgba(255, 20, 147, 0.3); border-radius: 12px; padding: 3rem 1rem; text-align: center; background: rgba(255, 20, 147, 0.02); transition: all 0.3s ease;}
+.admin-upload-box:hover { background: rgba(255, 20, 147, 0.05); border-color: var(--primary-accent); }
+.admin-loading { height: 100vh; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-family: 'Cormorant Garamond', serif; color: var(--text-dark); }
